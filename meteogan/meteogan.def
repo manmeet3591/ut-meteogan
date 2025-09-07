@@ -1,0 +1,10 @@
+Bootstrap: docker
+From: nvcr.io/nvidia/pytorch:24.05-py3
+%post
+
+    echo "Installing core Python packages..."
+    pip install --upgrade pip
+    pip install xarray[complete] wandb timm jupyter 
+    pip install --no-build-isolation https://github.com/NVlabs/earth2grid/archive/main.tar.gz
+    pip install gcsfs
+    pip install clearml
