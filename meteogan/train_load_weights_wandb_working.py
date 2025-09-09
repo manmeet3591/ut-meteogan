@@ -530,7 +530,8 @@ from datetime import datetime, timedelta
 
 # --------- BIG DATE LOOP: 2018-01-01 → 2020-12-31 ---------
 #start_date = datetime(2018, 1, 1)
-start_date = datetime(2018, 4, 16)
+#start_date = datetime(2018, 4, 16)
+start_date = datetime(2019, 1, 7)
 end_date   = datetime(2020, 12, 31)
 
 all_x_patches = []
@@ -919,6 +920,9 @@ while d <= end_date:
                 
                 d_loss.backward(retain_graph=True)
                 optimizerD.step()
+                # Clean up memory
+                
+
                 
                 dtg, dbg = get_grads_D_WAN(netD)
                 cache['d_top_grad'] += dtg
@@ -956,6 +960,8 @@ while d <= end_date:
                     "train/g_bot_grad": float(gbg),
                     "train/epoch": epoch
                 })
+                del lowres, real_img_hr, fake_img_hr  # Delete variables
+                torch.cuda.empty_cache()  # Clear CUDA memory cache
                 # Print information by tqdm
                 train_bar.set_description(desc='[%d/%d] D grads:(%f, %f) G grads:(%f, %f) Loss_D: %.4f Loss_G: %.4f = %.4f + %.4f' % (epoch, n_epochs, dtg, dbg, gtg, gbg, d_loss, g_loss, image_loss, adversarial_loss))
             
